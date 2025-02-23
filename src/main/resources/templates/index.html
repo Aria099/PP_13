@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div>
+    <!-- Отображение имени аутентифицированного пользователя -->
+    <h3 th:text="${#authentication.name}"></h3>
+
+    <!-- Ссылки для неаутентифицированных пользователей -->
+    <div sec:authorize="!isAuthenticated()">
+        <form th:action="@{/login}" method="post" style="display: inline;">
+            <button type="submit" class="link-style">Войти</button>
+        </form>
+    </div>
+    <div sec:authorize="!isAuthenticated()">
+        <form th:action="@{/registration}" method="post" style="display: inline;">
+            <button type="submit" class="link-style">Зарегистрироваться</button>
+        </form>
+    </div>
+
+    <!-- Ссылки для аутентифицированных пользователей -->
+    <div sec:authorize="isAuthenticated()">
+        <!-- Форма для выхода из системы -->
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="link-style">Выход</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
