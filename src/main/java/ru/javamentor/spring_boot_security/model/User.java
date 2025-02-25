@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user")
@@ -17,12 +18,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false, unique = true)
     @NotEmpty(message = "Поле не должно быть пустым")
     @Size(min = 2, message = "Не меньше 2 знаков")
     private String username;
 
-    @Column
+    @Column(nullable = false)
     @NotEmpty(message = "Поле не должно быть пустым")
     @Size(min = 2, message = "Не меньше 2 знаков")
     private String password;
@@ -31,7 +32,7 @@ public class User implements UserDetails {
     private String passwordConfirm;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<Role> roles;
+    private Set<Role> roles;
 
     public User() {
     }
@@ -100,11 +101,11 @@ public class User implements UserDetails {
         this.passwordConfirm = passwordConfirm;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 

@@ -1,4 +1,4 @@
-package ru.javamentor.spring_boot_security;
+package ru.javamentor.spring_boot_security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -10,6 +10,7 @@ import ru.javamentor.spring_boot_security.repository.RoleRepository;
 import ru.javamentor.spring_boot_security.repository.UserRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class AdminInitializer implements CommandLineRunner {
@@ -26,7 +27,7 @@ public class AdminInitializer implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (userRepository.findUserByUsername("admin") == null) {
             Role adminRole = roleRepository.findByName("ROLE_ADMIN");
             if (adminRole == null) {
@@ -46,7 +47,7 @@ public class AdminInitializer implements CommandLineRunner {
             User admin = new User();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin"));
-            admin.setRoles(List.of(adminRole, userRole));
+            admin.setRoles(Set.of(adminRole, userRole));
 
             userRepository.save(admin);
 

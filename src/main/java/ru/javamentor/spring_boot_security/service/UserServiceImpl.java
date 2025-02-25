@@ -1,63 +1,40 @@
 package ru.javamentor.spring_boot_security.service;
 
 import jakarta.persistence.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.javamentor.spring_boot_security.model.Role;
 import ru.javamentor.spring_boot_security.model.User;
-import ru.javamentor.spring_boot_security.repository.RoleRepository;
 import ru.javamentor.spring_boot_security.repository.UserRepository;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
-    @PersistenceContext
-    private EntityManager em;
-
-    private UserRepository userRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setBCryptPasswordEncoder(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username);
+    public User getUserById(Long id) {
+        Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return user;
-    }
+        User userFromDb = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("User not found with id: {}", id);
+                    throw new EntityNotFoundException("User not found with id: " + id);
+                });
 
-    @Override
-    public Optional<User> getUserById(Long id) {
-        try {
-            Optional<User> userFromDb = userRepository.findById(id);
-            return Optional.of(userFromDb.orElse(new User()));
-        } catch (EntityNotFoundException e) {
-            System.out.println("User not found with id: " + id);
-            throw e;
-        }
+        return userFromDb;
     }
 
     @Override
@@ -71,34 +48,57 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (userFromDB != null) {
             return false;
         }
-        user.setRoles(Collections.singletonList(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
     }
 
     @Override
-    public boolean deleteUserById(Long id) {
+    public boolean deleteUser(Long id) {
+        Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-        try {
-            if (userRepository.findById(id).isPresent()) {
-                userRepository.deleteById(id);
-                return true;
-            }
-            return false;
-        } catch (EntityNotFoundException e) {
-            System.out.println("User not found with id: " + id);
-            throw e;
-        }
-    }
+        User userFromDb = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("User not found with id: {}", id);
+                    throw new EntityNotFoundException("User not found with id: " + id);
+                });
 
-    public List<User> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
+        userRepository.delete(userFromDb);
+        return true;
     }
 
     @Override
-    public void updateUser(User user) {
-        userRepository.save(user);
+    public boolean updateUser(Long id, User updatedUser) {
+
+        Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
+        User userFromDb = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("User not found with id: {}", id);
+                    throw new EntityNotFoundException("User not found with id: " + id);
+                });
+
+        // Проверяем, изменился ли username
+        if (!userFromDb.getUsername().equals(updatedUser.getUsername())) {
+            // Если username изменился, проверяем его уникальность
+            User existingUser = userRepository.findUserByUsername(updatedUser.getUsername());
+            if (existingUser != null) {
+                return false;
+            }
+        }
+        // Обновление полей
+        userFromDb.setUsername(updatedUser.getUsername());
+        userFromDb.setRoles(updatedUser.getRoles());
+
+        // Проверка изменения пароля
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            // Если пароль изменен, кодируем его
+            userFromDb.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+        } else {
+            // Без изменений
+            userFromDb.setPassword(userFromDb.getPassword());
+        }
+        userRepository.save(userFromDb);
+        return true;
     }
 }

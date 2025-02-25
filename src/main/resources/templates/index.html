@@ -9,7 +9,7 @@
 <body>
 <div>
     <!-- Отображение имени аутентифицированного пользователя -->
-    <h3 th:text="${#authentication.name}"></h3>
+    <h1>Добро пожаловать, <span th:text="${#authentication.name}"></span>!</h1>
 
     <!-- Ссылки для неаутентифицированных пользователей -->
     <div sec:authorize="!isAuthenticated()">

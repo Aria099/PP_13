@@ -9,22 +9,22 @@ import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import ru.javamentor.spring_boot_security.service.UserServiceImpl;
+import ru.javamentor.spring_boot_security.security.SecurityUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final UserServiceImpl userService;
+    private final SecurityUserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
-    public WebSecurityConfig(UserServiceImpl userService, BCryptPasswordEncoder bCryptPasswordEncoder,
+    public WebSecurityConfig(SecurityUserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder,
                              AuthenticationSuccessHandler authenticationSuccessHandler) {
-        this.userService = userService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
@@ -32,7 +32,7 @@ public class WebSecurityConfig {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder
-                .userDetailsService(userService)
+                .userDetailsService(userDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder);
         return authenticationManagerBuilder.build();
     }
@@ -48,7 +48,7 @@ public class WebSecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .successHandler(authenticationSuccessHandler) // Используем кастомный обработчик
+                        .successHandler(authenticationSuccessHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
