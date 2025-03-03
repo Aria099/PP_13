@@ -9,7 +9,6 @@ import ru.javamentor.spring_boot_security.model.User;
 import ru.javamentor.spring_boot_security.repository.RoleRepository;
 import ru.javamentor.spring_boot_security.repository.UserRepository;
 
-import java.util.List;
 import java.util.Set;
 
 @Component
@@ -28,7 +27,7 @@ public class AdminInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.findUserByUsername("admin") == null) {
+        if (userRepository.findUserByEmail("admin@mail.ru") == null) {
             Role adminRole = roleRepository.findByName("ROLE_ADMIN");
             if (adminRole == null) {
                 adminRole = new Role();
@@ -46,6 +45,9 @@ public class AdminInitializer implements CommandLineRunner {
             // Создаём пользователя-администратора
             User admin = new User();
             admin.setUsername("admin");
+            admin.setEmail("admin@mail.ru");
+            admin.setLastname("admin");
+            admin.setAge(12);
             admin.setPassword(passwordEncoder.encode("admin"));
             admin.setRoles(Set.of(adminRole, userRole));
 

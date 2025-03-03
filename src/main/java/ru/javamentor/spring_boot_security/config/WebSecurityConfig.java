@@ -40,19 +40,20 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/registration", "/login").permitAll() // Разрешаем доступ к регистрации и входу
+                        .requestMatchers("/admin").hasRole("ADMIN") // Доступ только для ADMIN//"/login").permitAll() // Разрешаем доступ к регистрации и входу
                         .requestMatchers("/user").hasAnyRole("USER", "ADMIN") // Только для пользователей с ролью USER
-                        .requestMatchers("/admin").hasRole("ADMIN") // Только для пользователей с ролью ADMIN
                         .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/admin", true)
                         .successHandler(authenticationSuccessHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/") // Перенаправление на главную страницу после выхода
+                        .logoutSuccessUrl("/login") // Перенаправление после выхода
                         .permitAll()
                 );
         return http.build();

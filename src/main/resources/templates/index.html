@@ -1,35 +1,73 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Главная</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/style.css}">
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            margin: 0;
+        }
+
+        header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .header-class {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .header-class button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 15px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .header-class button:hover {
+            background-color: #218838;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+
+        h2, h3 {
+            color: #007bff;
+            margin-top: 20px;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+    </style>
+
 </head>
 <body>
-<div>
-    <!-- Отображение имени аутентифицированного пользователя -->
-    <h1>Добро пожаловать, <span th:text="${#authentication.name}"></span>!</h1>
+<header>
+    <div class="header-class">
+        <button class="buttons" onclick="window.location.href = '/auth/login'">Sign In</button>
+    </div>
+</header>
 
-    <!-- Ссылки для неаутентифицированных пользователей -->
-    <div sec:authorize="!isAuthenticated()">
-        <form th:action="@{/login}" method="post" style="display: inline;">
-            <button type="submit" class="link-style">Войти</button>
-        </form>
-    </div>
-    <div sec:authorize="!isAuthenticated()">
-        <form th:action="@{/registration}" method="post" style="display: inline;">
-            <button type="submit" class="link-style">Зарегистрироваться</button>
-        </form>
-    </div>
+<h1>Welcome!</h1>
 
-    <!-- Ссылки для аутентифицированных пользователей -->
-    <div sec:authorize="isAuthenticated()">
-        <!-- Форма для выхода из системы -->
-        <form th:action="@{/logout}" method="post" style="display: inline;">
-            <button type="submit" class="link-style">Выход</button>
-        </form>
-    </div>
-</div>
 </body>
 </html>

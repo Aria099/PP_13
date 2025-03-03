@@ -1,7 +1,9 @@
 package ru.javamentor.spring_boot_security.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +20,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotEmpty(message = "Поле не должно быть пустым")
     @Size(min = 2, message = "Не меньше 2 знаков")
     private String username;
@@ -26,7 +28,21 @@ public class User implements UserDetails {
     @Column(nullable = false)
     @NotEmpty(message = "Поле не должно быть пустым")
     @Size(min = 2, message = "Не меньше 2 знаков")
+    private String lastname;
+
+    @Column(nullable = false)
+    @NotEmpty(message = "Поле не должно быть пустым")
+    @Size(min = 2, message = "Не меньше 2 знаков")
     private String password;
+
+    @Column(nullable = false, unique = true)
+    @NotEmpty(message = "Поле не должно быть пустым")
+    @Email(message = "Email should be valid")
+    private String email;
+
+    @Column(nullable = false)
+    @NotNull(message = "Поле не должно быть пустым")
+    private Integer age;
 
     @Transient
     private String passwordConfirm;
@@ -37,9 +53,44 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String username, String password) {
+    public User(String username, String lastname, String password, String email, Integer age) {
         this.username = username;
+        this.lastname = lastname;
         this.password = password;
+        this.email = email;
+        this.age = age;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public Long getId() {
@@ -48,11 +99,6 @@ public class User implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
     }
 
     @Override
@@ -73,10 +119,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     @Override

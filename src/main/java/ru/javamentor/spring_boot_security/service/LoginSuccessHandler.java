@@ -1,14 +1,14 @@
-package ru.javamentor.spring_boot_security.config;
+package ru.javamentor.spring_boot_security.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-@Component
+@Service
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override

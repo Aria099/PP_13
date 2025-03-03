@@ -11,12 +11,12 @@ import ru.javamentor.spring_boot_security.repository.UserRepository;
 
 import java.util.List;
 
-
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
@@ -26,7 +26,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
         User userFromDb = userRepository.findById(id)
                 .orElseThrow(() -> {
@@ -44,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean saveUser(User user) {
-        User userFromDB = userRepository.findUserByUsername(user.getUsername());
+        User userFromDB = userRepository.findUserByEmail(user.getEmail());
         if (userFromDB != null) {
             return false;
         }
@@ -55,7 +54,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteUser(Long id) {
-        Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
         User userFromDb = userRepository.findById(id)
                 .orElseThrow(() -> {
@@ -70,18 +68,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUser(Long id, User updatedUser) {
 
-        Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
         User userFromDb = userRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("User not found with id: {}", id);
                     throw new EntityNotFoundException("User not found with id: " + id);
                 });
-
         // Проверяем, изменился ли username
-        if (!userFromDb.getUsername().equals(updatedUser.getUsername())) {
+        if (!userFromDb.getEmail().equals(updatedUser.getEmail())) {
             // Если username изменился, проверяем его уникальность
-            User existingUser = userRepository.findUserByUsername(updatedUser.getUsername());
+            User existingUser = userRepository.findUserByEmail(updatedUser.getEmail());
             if (existingUser != null) {
                 return false;
             }
@@ -89,6 +84,10 @@ public class UserServiceImpl implements UserService {
         // Обновление полей
         userFromDb.setUsername(updatedUser.getUsername());
         userFromDb.setRoles(updatedUser.getRoles());
+        userFromDb.setEmail(updatedUser.getEmail());
+        userFromDb.setLastname(updatedUser.getLastname());
+        userFromDb.setAge(updatedUser.getAge());
+
 
         // Проверка изменения пароля
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
