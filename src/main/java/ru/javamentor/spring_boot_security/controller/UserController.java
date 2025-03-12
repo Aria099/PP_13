@@ -32,12 +32,18 @@ public class UserController {
 //
 //        return ResponseEntity.ok(user);
 //    }
+//@GetMapping("/showAccount")
+//public ResponseEntity<User> showUserAccount(Principal principal) {
+//    System.out.println(principal.getName());
+//    User user = userService.findUserByEmail(principal.getName()).get();
+//    //System.out.println(principal.getName());
+//    return new ResponseEntity<>(user, HttpStatus.OK);
+//}
 @GetMapping("/showAccount")
-public ResponseEntity<User> showUserAccount(Principal principal) {
-    System.out.println();
-        User user = userService.findUserByEmail(principal.getName()).get();
-    System.out.println();
-    //System.out.println(principal.getName());
-    return new ResponseEntity<>(user, HttpStatus.OK);
+public ResponseEntity<User> getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    User user = userService.findByUsername(username);
+    return ResponseEntity.ok(user);
 }
 }

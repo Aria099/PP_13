@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.javamentor.spring_boot_security.model.Role;
 import ru.javamentor.spring_boot_security.model.User;
@@ -33,13 +34,13 @@ public class AdminController {
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() { //Authentication authentication
-////        if (authentication != null && authentication.isAuthenticated()) {
-////            System.out.println("User roles: " + authentication.getAuthorities());
-////        }
-////        List<User> users = userService.allUsers();
-////        if (users.isEmpty()) {
-////            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-////        }
+//        if (authentication != null && authentication.isAuthenticated()) {
+//            System.out.println("User roles: " + authentication.getAuthorities());
+//        }
+//        List<User> users = userService.allUsers();
+//        if (users.isEmpty()) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
         return new ResponseEntity<>(userService.allUsers(), HttpStatus.OK);
     }
 //    @GetMapping("/users")
@@ -48,14 +49,20 @@ public class AdminController {
 //    }
 
 
-
-
-
     @GetMapping("/showAccount")
-    public ResponseEntity<User> showInfoUser(Principal principal) {
-        System.out.println(principal.getName());
-        return new ResponseEntity<>(userService.findByEmail(principal.getName()), HttpStatus.OK);
+    public ResponseEntity<User> getCurrentAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        return ResponseEntity.ok(user);
     }
+
+
+//    @GetMapping("/showAccount")
+//    public ResponseEntity<User> showInfoUser(Principal principal) {
+//        System.out.println(principal.getName());
+//        return new ResponseEntity<>(userService.findByEmail(principal.getName()), HttpStatus.OK);
+//    }
 
 
     @PostMapping("/users")
