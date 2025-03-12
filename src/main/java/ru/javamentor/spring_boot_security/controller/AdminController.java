@@ -2,86 +2,100 @@ package ru.javamentor.spring_boot_security.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javamentor.spring_boot_security.model.Role;
 import ru.javamentor.spring_boot_security.model.User;
+import ru.javamentor.spring_boot_security.repository.UserRepository;
 import ru.javamentor.spring_boot_security.service.RoleService;
 import ru.javamentor.spring_boot_security.service.UserService;
 
-import java.util.HashSet;
+import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
 
-@Controller
-@RequestMapping("/admin")
+@RestController
+@RequestMapping("/api/admin")
 public class AdminController {
 
     private final UserService userService;
     private final RoleService roleService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public AdminController(UserService userService, RoleService roleService) {
+    public AdminController(UserService userService, RoleService roleService, UserRepository userRepository) {
         this.userService = userService;
         this.roleService = roleService;
+        this.userRepository = userRepository;
     }
 
-    @GetMapping()
-    public String getAllUsers(Model model, Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            System.out.println("User roles: " + authentication.getAuthorities());
-        }
-        model.addAttribute("allUsers", userService.allUsers());
-        model.addAttribute("user", new User());
-        model.addAttribute("allRoles", roleService.getAllRoles());
-        return "admin";
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() { //Authentication authentication
+////        if (authentication != null && authentication.isAuthenticated()) {
+////            System.out.println("User roles: " + authentication.getAuthorities());
+////        }
+////        List<User> users = userService.allUsers();
+////        if (users.isEmpty()) {
+////            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+////        }
+        return new ResponseEntity<>(userService.allUsers(), HttpStatus.OK);
+    }
+//    @GetMapping("/users")
+//    public List<User> getAllUsers() {
+//        return userService.allUsers();
+//    }
+
+
+
+
+
+    @GetMapping("/showAccount")
+    public ResponseEntity<User> showInfoUser(Principal principal) {
+        System.out.println(principal.getName());
+        return new ResponseEntity<>(userService.findByEmail(principal.getName()), HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public String saveUser(@ModelAttribute("user") @Valid User user,
-                           BindingResult br, Model model) {
-        if (br.hasErrors()) {
-            model.addAttribute("allRoles", roleService.getAllRoles());
-            model.addAttribute("user", new User());
-            return "admin";
-        }
+
+    @PostMapping("/users")
+    public ResponseEntity<?> addNewUser(@RequestBody @Valid User user) {
+
         userService.saveUser(user);
-        return "redirect:/admin";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/user/edit")
-    public String updateUser(@ModelAttribute("user") @Valid User user,
-                             @RequestParam(value = "roles", required = false) List<Long> roleId,
-                             BindingResult br, Model model) {
-        if (br.hasErrors()) {
-            model.addAttribute("allRoles", roleService.getAllRoles());
-            return "redirect:/admin";
-        }
-        if (roleId != null) {
-            List<Role> selectedRoles = roleService.getRoleById(roleId);
-            user.setRoles(new HashSet<>(selectedRoles));
-        } else {
-            user.setRoles(new HashSet<>()); // Если роли не выбраны, очищаем список ролей
-        }
-        userService.updateUser(user.getId(), user);
-        return "redirect:/admin";
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<?> updateUser(@RequestBody @Valid User user) {
+
+        userService.updateUser(user);
+        return ResponseEntity.ok("User updated successfully");
     }
 
-    @PostMapping("/user/delete")
-    public String deleteUser(@RequestParam(required = true, defaultValue = "") Long id,
-                             @RequestParam(required = true, defaultValue = "") String action) {
-        if (action.equals("delete")) {
-            userService.deleteUser(id);
-        }
-        return "redirect:/admin";
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+
+        userService.deleteUser(id);
+        return new ResponseEntity<>("User was deleted.", HttpStatus.OK);
     }
 
-    @GetMapping("/user")
-    public String viewUser(@RequestParam("id") Long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        return "user";
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+        User user = userService.findOneById(id);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<Collection<Role>> getAllRoles() { //ResponseEntity<Collection<Role>>
+        return new ResponseEntity<>(roleService.getAllRoles(), HttpStatus.OK);
+    }
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<Collection<Role>> getRole(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.findOneById(id).getRoles(), HttpStatus.OK);
     }
 }

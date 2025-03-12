@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import ru.javamentor.spring_boot_security.security.SecurityUserDetailsService;
+import ru.javamentor.spring_boot_security.service.LoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -18,13 +19,16 @@ public class WebSecurityConfig {
     private final SecurityUserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final LoginSuccessHandler loginSuccessHandler;
 
     @Autowired
     public WebSecurityConfig(SecurityUserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder,
-                             AuthenticationSuccessHandler authenticationSuccessHandler) {
+                             AuthenticationSuccessHandler authenticationSuccessHandler,
+                             LoginSuccessHandler loginSuccessHandler) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.userDetailsService = userDetailsService;
+        this.loginSuccessHandler = loginSuccessHandler;
     }
 
     @Bean
@@ -42,18 +46,28 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin").hasRole("ADMIN") // Доступ только для ADMIN//"/login").permitAll() // Разрешаем доступ к регистрации и входу
-                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN") // Только для пользователей с ролью USER
-                        .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Доступ только для ADMIN
+                        //.requestMatchers("/user").hasAnyRole("USER", "ADMIN") // Только для пользователей с ролью USER
+                        //.anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                        .requestMatchers("/auth/login", "/", "/error", "/auth/registration").permitAll()
+                        .anyRequest().hasAnyRole("USER", "ADMIN")
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/admin", true)
-                        .successHandler(authenticationSuccessHandler)
+                        .successHandler(loginSuccessHandler)
+                        .loginPage("/auth/login")
+
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .loginProcessingUrl("/process_login")
+                        .failureUrl("/auth/login?error")
+
+
+                        //.defaultSuccessUrl("/admin", true)
+                        //.successHandler(authenticationSuccessHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login") // Перенаправление после выхода
+                        .logoutSuccessUrl("/auth/login") // Перенаправление после выхода
                         .permitAll()
                 );
         return http.build();

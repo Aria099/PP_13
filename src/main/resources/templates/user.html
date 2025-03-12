@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>ID USER</title>
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
@@ -13,15 +14,16 @@
             position: fixed;
             left: 0;
             z-index: 1000;
-            top: 70px;
+            top: 70px; /* Учитываем высоту navbar, чтобы поместить меню под ним */
         }
 
 
         .container-main {
-            margin-left: 220px;
-            margin-right: 20px;
-            padding-top: 76px;
+            margin-left: 220px; /* Учитываем ширину меню */
+            margin-right: 20px; /* Добавляем отступ справа */
+            padding-top: 76px; /* Учитываем высоту навигационной панели и отступ для меню */
         }
+
 
         .navbar-brand {
             margin-right: auto;
@@ -30,48 +32,35 @@
         .menu-btn {
             background-color: transparent;
             border: none;
-            color: #057AFB;
+            color: #057AFB; /* Цвет текста по умолчанию */
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.3s, color 0.3s; /* Анимация изменения цвета текста */
             width: 100%;
             height: 50px;
             margin-bottom: 10px;
-            text-align: left;
+            text-align: left; /* Выравнивание текста слева */
             line-height: 50px;
-            padding-left: 20px;
+            padding-left: 20px; /* Отступ текста слева */
             border-radius: 4px 4px 4px 4px
         }
 
         .menu-btn:hover {
-            background-color: #057AFB;
-            color: white;
-        }
-
-        .col-constructor-name {
-            font-size: 16px;
+            background-color: #057AFB; /* Цвет фона при наведении */
+            color: white; /* Цвет текста при наведении */
         }
 
     </style>
 </head>
 <body style="background-color: #f8f9fa;">
-
-<nav class="navbar navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand ml-5" style="color: white; font-family: 'Roboto', sans-serif; font-size: 20px;">
-        <span th:text="${user.email}" style="font-weight: bold;font-size: 18px"></span> with
-        roles:
-        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <span th:if="${#authorization.expression('hasRole(''USER'')')} "
-                  style="font-weight: lighter">ADMIN USER</span>
-            <span th:unless="${#authorization.expression('hasRole(''USER'')')}">ADMIN</span>
-        </span>
-        <span th:unless="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <span th:if="${#authorization.expression('hasRole(''USER'')')}">USER</span>
-        </span>
-    </a>
-    <form th:action="@{/logout}" th:method="POST" class="d-inline">
-        <button class="btn btn-link text-secondary font-size-20" type="submit">Logout</button>
-    </form>
-</nav>
+<header>
+    <nav class="navbar navbar-dark bg-dark mb-3 fixed-top navbarUser">
+    <span class="navbar-brand" id="navbarUser">
+    </span>
+        <form th:action="@{/logout}" th:method="POST" class="d-inline">
+            <button class="btn btn-link text-secondary font-size-20" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
 
 <div class="menu">
     <th:block th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
@@ -104,41 +93,16 @@
                 <table class="table table-hover table-striped"
                        style="background-color: white; width: 100%; font-size: 14px;">
                     <thead>
-
                     <tr>
-                        <th class="col-constructor-name">ID</th>
-                        <th class="col-constructor-name">First Name</th>
-                        <th class="col-constructor-name">Last Name</th>
-                        <th class="col-constructor-name">Age</th>
-                        <th class="col-constructor-name">Email</th>
-                        <th class="col-constructor-name">Role</th>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Role</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-
-                        <td th:text="${user.getId()}"
-                            style="padding-bottom: 5px; padding-right: 5px">Email">Id
-                        </td>
-                        <td th:text="${user.username}"
-                            style="padding-bottom: 5px; padding-right: 5px">Email">First Name
-                        </td>
-                        <td th:text="${user.lastname}"
-                            style="padding-bottom: 5px; padding-right: 5px">Email">Last Name
-                        </td>
-                        <td th:text="${user.age}" style="padding-bottom: 5px; padding-right: 5px">
-                            Email">Age
-                        </td>
-                        <td th:text="${user.email}"
-                            style="padding-bottom: 5px; padding-right: 5px">Email
-                        </td>
-                        <td style="padding-bottom: 5px; padding-right: 5px">
-                <span th:each="role, iterStat : ${user.roles}">
-                    <span th:text="${role.name.substring(5)}"></span>
-                    <span th:if="${!iterStat.last}"></span>
-                </span>
-                        </td>
-                    </tr>
+                    <tbody id="tableUser">
                     </tbody>
                 </table>
 
@@ -147,6 +111,7 @@
     </div>
 </div>
 
+<script type="text/javascript" src="/user.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

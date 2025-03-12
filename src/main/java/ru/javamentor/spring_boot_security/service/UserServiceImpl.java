@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.javamentor.spring_boot_security.model.User;
 import ru.javamentor.spring_boot_security.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,66 +40,84 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> allUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllWithRoles();
     }
 
     @Override
-    public boolean saveUser(User user) {
-        User userFromDB = userRepository.findUserByEmail(user.getEmail());
-        if (userFromDB != null) {
-            return false;
-        }
+    public void saveUser(User user) {
+//        User userFromDB = userRepository.findByEmailWithRoles(user.getEmail());
+//        if (userFromDB != null) {
+//            System.out.println("User already exists");
+//        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return true;
     }
 
     @Override
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
 
         User userFromDb = userRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("User not found with id: {}", id);
                     throw new EntityNotFoundException("User not found with id: " + id);
                 });
-
         userRepository.delete(userFromDb);
-        return true;
     }
 
     @Override
-    public boolean updateUser(Long id, User updatedUser) {
+    public void updateUser(User user) {
 
-        User userFromDb = userRepository.findById(id)
+        User userFromDb = userRepository.findById(user.getId())
                 .orElseThrow(() -> {
-                    logger.error("User not found with id: {}", id);
-                    throw new EntityNotFoundException("User not found with id: " + id);
+                    logger.error("User not found");
+                    throw new EntityNotFoundException("User not found with id: " + user.getId());
                 });
-        // Проверяем, изменился ли username
-        if (!userFromDb.getEmail().equals(updatedUser.getEmail())) {
-            // Если username изменился, проверяем его уникальность
-            User existingUser = userRepository.findUserByEmail(updatedUser.getEmail());
-            if (existingUser != null) {
-                return false;
-            }
-        }
+
         // Обновление полей
-        userFromDb.setUsername(updatedUser.getUsername());
-        userFromDb.setRoles(updatedUser.getRoles());
-        userFromDb.setEmail(updatedUser.getEmail());
-        userFromDb.setLastname(updatedUser.getLastname());
-        userFromDb.setAge(updatedUser.getAge());
+        userFromDb.setUsername(user.getUsername());
+        userFromDb.setRoles(user.getRoles());
+        userFromDb.setEmail(user.getEmail());
+        userFromDb.setLastname(user.getLastname());
+        userFromDb.setAge(user.getAge());
+        userFromDb.setPassword(user.getPassword());
 
 
         // Проверка изменения пароля
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             // Если пароль изменен, кодируем его
-            userFromDb.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+            userFromDb.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         } else {
             // Без изменений
             userFromDb.setPassword(userFromDb.getPassword());
         }
         userRepository.save(userFromDb);
-        return true;
     }
+    @Override
+    public User findOneById(Long id) {
+        Optional<User> user = userRepository.findByPersonIdWithRoles(id);
+        if (user.isEmpty())
+            throw new UsernameNotFoundException("User not found");
+        return user.get();
+    }
+    @Override
+    public User findUserByFirstName(String name) {
+        Optional<User> user = userRepository.findByFirstNameWithRoles(name);
+        if (user.isEmpty())
+            throw new UsernameNotFoundException("User " + name + " not found");
+        return user.get();
+
+    }
+    @Override
+    public User findByEmail(String email) {
+        Optional<User> user = userRepository.findByEmailWithRoles(email);
+        if (user.isEmpty())
+            throw new UsernameNotFoundException("User not found");
+        return user.get();
+    }
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmailWithRoles(email);
+    }
+
+
 }

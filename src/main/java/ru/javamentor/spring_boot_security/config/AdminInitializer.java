@@ -57,5 +57,16 @@ public class AdminInitializer implements CommandLineRunner {
         } else {
             System.out.println("Администратор уже существует.");
         }
+        // Создаём пользователя
+//        User one = new User();
+//        one.setUsername("fff");
+//        one.setEmail("fff@mail.ru");
+//        one.setLastname("fff");
+//        one.setAge(12);
+//        one.setPassword(passwordEncoder.encode("fff"));
+//        one.setRoles(Set.of(roleRepository.findByName("ROLE_USER")));
+//
+//        userRepository.save(one);
+//        System.out.println("User added");
     }
 }

@@ -3,6 +3,7 @@ package ru.javamentor.spring_boot_security.service;
 import ru.javamentor.spring_boot_security.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -10,9 +11,18 @@ public interface UserService {
 
     List<User> allUsers();
 
-    boolean saveUser(User user);
+    void saveUser(User user);
 
-    boolean deleteUser(Long id);
+    void deleteUser(Long id);
 
-    boolean updateUser(Long id, User updatedUser);
+    void updateUser(User user);
+
+    User findOneById(Long id);
+
+    User findUserByFirstName(String name);
+
+    User findByEmail(String email);
+
+    Optional<User> findUserByEmail(String email);
+
 }
