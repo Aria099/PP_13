@@ -33,7 +33,6 @@ function rolesToStringForAdmin(roles) {
     for (const element of roles) {
         rolesString += (element.name.replace('ROLE_', '') + ' ');
     }
-    // rolesString = rolesString.substring(0, rolesString.length - 2);
     return rolesString;
 }
 
@@ -44,16 +43,12 @@ async function getUserById(id) {
 }
 
 async function open_fill_modal(form, modal, id) {
-    // Добавим вывод в консоль для отслеживания
-    // console.log("Fetching user data for ID:", id);
-
     const url = `http://localhost:8080/api/admin/users/${id}`;
 
     try {
         const response = await fetch(url);
         const userData = await response.json();
 
-        // Добавим вывод в консоль для отслеживания
         console.log("Fetched user data:", userData, form);
 
 
@@ -73,7 +68,6 @@ async function open_fill_modal(form, modal, id) {
             }
         });
 
-        // Открываем модальное окно
         modal.show();
     } catch (error) {
         console.error("Error fetching user data:", error);

@@ -17,7 +17,6 @@
             integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
             crossorigin="anonymous"></script>
 
-
     <title>Admin panel</title>
     <style>
         .wider-cell {
@@ -28,7 +27,6 @@
             text-align: left !important;
         }
     </style>
-
 
 </head>
 <body style="padding-top: 56px; background-color: #f8f9fa;">
@@ -292,93 +290,90 @@
                     </div>
                     <!--            Add new User                -->
                     <div class="tab-pane fade" id="newUser" role="tabpanel" aria-labelledby="nav-new_user-tab">
-                        <!-- Заголовок с отступом -->
                         <div style="margin-bottom: 15px;"></div>
                         <h4 style="margin-left: 20px;">Add new user</h4>
-
 
                         <div class="d-flex justify-content-center align-items-center container">
                             <div class="row">
                                 <form id="formNewUser">
+                                    <div id="validationErrorsNewUser" class="text-danger"></div>
 
-
-
-
-
-                        <!-- Контейнер формы с границей и фоном -->
-
-
-                                            <div id="validationErrorsNewUser" class="text-danger"></div>
-
-                                            <!-- Поле "First Name" -->
-                                            <div style="margin-bottom: 20px;"></div>
-                                            <div class="form-group text-center">
-                                                <label for="create-username" class="control-label" style="font-weight: bold;">First Name</label>
-                                                <input type="text" class="form-control" id="create-username" placeholder="First Name"
-                                                       name="username" required>
-                                            </div>
-
-                                            <!-- Поле "Last Name" -->
-                                            <div style="margin-bottom: 20px;"></div>
-                                            <div class="form-group text-center">
-                                                <label for="create-lastname" class="control-label" style="font-weight: bold;">Last Name</label>
-                                                <input type="text" class="form-control" id="create-lastname" placeholder="Last Name"
-                                                       name="lastname" required>
-                                            </div>
-
-                                            <!-- Поле "Age" -->
-                                            <div style="margin-bottom: 20px;"></div>
-                                            <div class="form-group text-center">
-                                                <label for="create-age" class="control-label" style="font-weight: bold;">Age</label>
-                                                <input type="number" class="form-control" id="create-age" placeholder="Age" name="age"
-                                                       required>
-                                            </div>
-
-                                            <!-- Поле "Email" -->
-                                            <div style="margin-bottom: 20px;"></div>
-                                            <div class="form-group text-center">
-                                                <label for="create-email" class="control-label" style="font-weight: bold;">Email</label>
-                                                <input type="email" class="form-control" id="create-email" placeholder="Email" name="email"
-                                                       required>
-                                            </div>
-
-                                            <!-- Поле "Password" -->
-                                            <div style="margin-bottom: 20px;"></div>
-                                            <div class="form-group text-center">
-                                                <label for="create-password" class="control-label" style="font-weight: bold;">Password</label>
-                                                <input type="text" class="form-control" id="create-password" name="password"
-                                                       placeholder="Password" required>
-                                            </div>
-
-                                            <!-- Поле "Roles" -->
-                                            <div style="margin-bottom: 20px;"></div>
-                                            <div class="form-group text-center">
-                                                <label for="create-roles" class="control-label" style="font-weight: bold;">Role</label>
-                                                <select class="form-control form-control-static" id="create-roles" name="roles" required>
-                                                    <!-- Опции ролей будут добавлены динамически -->
-                                                </select>
-                                            </div>
-
-                                            <!-- Кнопка "Add new user" -->
-                                            <div style="margin-bottom: 20px;"></div>
-                                            <div>
-                                                <button type="submit" class="btn btn-success btn-lg d-block mx-auto"
-                                                        style="margin-bottom: 60px;">
-                                                    Add new user
-                                                </button>
-                                            </div>
-                                        </form>
+                                    <!-- Поле "First Name" -->
+                                    <div style="margin-bottom: 20px;"></div>
+                                    <div class="form-group text-center">
+                                        <label for="create-username" class="control-label" style="font-weight: bold;">First
+                                            Name</label>
+                                        <input type="text" class="form-control" id="create-username"
+                                               placeholder="First Name"
+                                               name="username" required>
                                     </div>
-                                </div>
+
+                                    <!-- Поле "Last Name" -->
+                                    <div style="margin-bottom: 20px;"></div>
+                                    <div class="form-group text-center">
+                                        <label for="create-lastname" class="control-label" style="font-weight: bold;">Last
+                                            Name</label>
+                                        <input type="text" class="form-control" id="create-lastname"
+                                               placeholder="Last Name"
+                                               name="lastname" required>
+                                    </div>
+
+                                    <!-- Поле "Age" -->
+                                    <div style="margin-bottom: 20px;"></div>
+                                    <div class="form-group text-center">
+                                        <label for="create-age" class="control-label"
+                                               style="font-weight: bold;">Age</label>
+                                        <input type="number" class="form-control" id="create-age" placeholder="Age"
+                                               name="age"
+                                               required>
+                                    </div>
+
+                                    <!-- Поле "Email" -->
+                                    <div style="margin-bottom: 20px;"></div>
+                                    <div class="form-group text-center">
+                                        <label for="create-email" class="control-label"
+                                               style="font-weight: bold;">Email</label>
+                                        <input type="email" class="form-control" id="create-email" placeholder="Email"
+                                               name="email"
+                                               required>
+                                    </div>
+
+                                    <!-- Поле "Password" -->
+                                    <div style="margin-bottom: 20px;"></div>
+                                    <div class="form-group text-center">
+                                        <label for="create-password" class="control-label" style="font-weight: bold;">Password</label>
+                                        <input type="text" class="form-control" id="create-password" name="password"
+                                               placeholder="Password" required>
+                                    </div>
+
+                                    <!-- Поле "Roles" -->
+                                    <div style="margin-bottom: 20px;"></div>
+                                    <div class="form-group text-center">
+                                        <label for="create-roles" class="control-label"
+                                               style="font-weight: bold;">Role</label>
+                                        <select class="form-control form-control-static" id="create-roles" name="roles"
+                                                required>
+                                        </select>
+                                    </div>
+
+                                    <div style="margin-bottom: 20px;"></div>
+                                    <div>
+                                        <button type="submit" class="btn btn-success btn-lg d-block mx-auto"
+                                                style="margin-bottom: 60px;">
+                                            Add new user
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
             <!-- Admin as User -->
             <div class="tab-pane" id="userPanel">
                 <div class="page-header" style="margin-top: 12px">
                     <h2>User information-page</h2>
                 </div>
-
 
                 <div style="margin-bottom: 20px;"></div>
                 <div class="tab-content" id="myTabContent">
@@ -386,43 +381,38 @@
                         <h5> About user</h5>
                     </div>
 
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead class="thead">
+                                <tr>
+                                    <th>Id</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Age</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tableAdmin">
 
-
-
-
-
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-striped">
-                            <thead class="thead">
-                            <tr>
-                                <th>Id</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Age</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tableAdmin">
-
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
-<script type="text/javascript" src="/admin.js"></script>
-<script type="text/javascript" src="/deleteUser.js"></script>
-<script type="text/javascript" src="/updateUser.js"></script>
-<script type="text/javascript" src="/formNewUser.js"></script>
-<script type="text/javascript" src="/tableUsers.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </div>
+    <script src="/admin.js"></script>
+    <script src="/delete.js"></script>
+    <script src="/update.js"></script>
+    <script src="/formNewUser.js"></script>
+    <script src="/tableUsers.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

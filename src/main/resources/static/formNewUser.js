@@ -32,7 +32,7 @@ function createNewUser() {
             if (!response.ok) {
                 return response.json();
             } else {
-                return { message: "User updated successfully" };
+                return {message: "User updated successfully"};
             }
         }).then(data => {
             if (Array.isArray(data) && data.length > 0 && data[0].defaultMessage) {

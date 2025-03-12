@@ -46,7 +46,7 @@ function editUser() {
             if (!response.ok) {
                 return response.json();
             } else {
-                return { message: "User updated successfully" };
+                return {message: "User updated successfully"};
             }
         }).then(data => {
             console.log("Response data:", data);
@@ -67,6 +67,7 @@ function editUser() {
         })
     });
 }
+
 function loadRolesForEdit() {
     let selectEdit = document.getElementById("edit-roles");
     selectEdit.innerHTML = "";
