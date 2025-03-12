@@ -1,4 +1,4 @@
-const URL = 'http://localhost:8080/api/admin/showAccount';
+const URL = 'http://localhost:8080/api/admin';
 const navbarAdmin = document.getElementById('navbarAdmin');
 const tableUserAdmin = document.getElementById('tableAdmin');
 

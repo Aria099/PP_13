@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import ru.javamentor.spring_boot_security.security.SecurityUserDetailsService;
 import ru.javamentor.spring_boot_security.service.LoginSuccessHandler;
 
@@ -18,15 +17,12 @@ public class WebSecurityConfig {
 
     private final SecurityUserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final LoginSuccessHandler loginSuccessHandler;
 
     @Autowired
     public WebSecurityConfig(SecurityUserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder,
-                             AuthenticationSuccessHandler authenticationSuccessHandler,
                              LoginSuccessHandler loginSuccessHandler) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.userDetailsService = userDetailsService;
         this.loginSuccessHandler = loginSuccessHandler;
     }
@@ -46,11 +42,9 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // Доступ только для ADMIN
-                        //.requestMatchers("/user").hasAnyRole("USER", "ADMIN") // Только для пользователей с ролью USER
-                        //.anyRequest().authenticated() // Все остальные запросы требуют аутентификации
-                        .requestMatchers("/auth/login", "/", "/error", "/auth/registration").permitAll()
-                        .anyRequest().hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .successHandler(loginSuccessHandler)
@@ -58,16 +52,12 @@ public class WebSecurityConfig {
 
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .loginProcessingUrl("/process_login")
+                        .loginProcessingUrl("/login")
                         .failureUrl("/auth/login?error")
-
-
-                        //.defaultSuccessUrl("/admin", true)
-                        //.successHandler(authenticationSuccessHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/auth/login") // Перенаправление после выхода
+                        .logoutSuccessUrl("/auth/login")
                         .permitAll()
                 );
         return http.build();
